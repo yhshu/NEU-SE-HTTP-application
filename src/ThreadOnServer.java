@@ -24,6 +24,7 @@ public class ThreadOnServer extends Thread {
             String uri = firstLineOfRequest.split(" ")[1];
             File file = new File("C:\\Users\\舒意恒\\Documents\\GitHub\\HTTP-application\\server_dir" + uri);
             if (file.exists()) {
+                // 如果文件存在
                 writer.println("HTTP/1.1 200 OK"); // 返回应答消息，并结束应答
                 if (uri.endsWith(".html")) {
                     writer.println("Content-Type:text/html");
@@ -52,13 +53,14 @@ public class ThreadOnServer extends Thread {
                 os.flush();
                 writer.close();
             } else {
-                //发送响应头
+                // 如果文件不存在
+                // 发送响应头
                 writer.println("HTTP/1.1 404 Not Found");
                 writer.println("Content-Type:text/plain");
                 writer.println("Content-Length:7");
                 writer.println();
-                //发送响应体
-                writer.print("访问内容不存在");
+                // 发送响应体
+                writer.print("404 Not Found");
                 writer.flush();
                 writer.close();
             }
