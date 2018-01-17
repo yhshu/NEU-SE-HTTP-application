@@ -5,17 +5,17 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class HTTPClient {
     public static void main(String args[]) throws IOException {
-
         while (true) {
             Socket socket = null;
             PrintStream writer = null;
             BufferedReader reader = null;
-            byte b[];
-            int len;
+            ByteArrayOutputStream byteOS = new ByteArrayOutputStream();
+            InputStream socketIS = null;
 
             Scanner sc = new Scanner(System.in);
             // 连接服务器
@@ -32,29 +32,41 @@ public class HTTPClient {
             writer.flush();
 
             // 接收响应状态
-            InputStream socketIS = socket.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(socketIS));
-            String firstLineOfResponse = reader.readLine();  // HTTP/1.1 200 OK
+            socketIS = socket.getInputStream();
+            DataInputStream dataIS = new DataInputStream(socketIS);
+
+            int b = 0;
+            ArrayList<Character> charList = new ArrayList<>();
+            while (true) {
+                b = dataIS.read();
+                charList.add((char) b);
+                if (b == '\n')
+                    break;
+            }
+            StringBuilder firstLineOfResponse = new StringBuilder();
+            for (char ch : charList) {
+                firstLineOfResponse.append(String.valueOf(ch));
+            }
             System.out.println(firstLineOfResponse);
-            String secondLineOfResponse = reader.readLine(); // Content-Type:text/html
-            String thirdLineOfResponse = reader.readLine();  // Content-Length:
-            String fourthLineOfResponse = reader.readLine(); // blank line
 
+            while (readLines(dataIS)) ;
 
-            if (firstLineOfResponse.endsWith("OK")) {
+            if (firstLineOfResponse.toString().contains("200 OK")) {
                 // 读取响应数据，保存文件
                 System.out.println("Transmission starts...");
-                b = new byte[1024];
+
                 String saveLocation = "C:\\Users\\舒意恒\\Documents\\GitHub\\HTTP-application\\saveLocation"; // 保存的位置
                 FileOutputStream fileOS = new FileOutputStream(saveLocation + "/" + fileName);
-                len = socketIS.read(b);
-                while (len != -1) {
-                    fileOS.write(b, 0, len);
-                    len = socketIS.read(b);
+
+                byte[] bytes = new byte[1024];
+                int len;
+                while ((len = dataIS.read(bytes)) != -1) {
+                    fileOS.write(bytes, 0, len);
+                    fileOS.flush();
                 }
-                System.out.println("Transmission complete.");
-                socketIS.close();
                 fileOS.close();
+
+                System.out.println("Transmission complete.");
 
                 if (fileName.endsWith(".html") || fileName.endsWith("htm"))// 请求的是HTML文档
                 {
@@ -63,18 +75,35 @@ public class HTTPClient {
                     Elements jpgs = doc.select("img[src$=.jpg]");
                     for (Element jpg : jpgs) {
                         String url = jpg.attr("src"); // 获得相对路径
+                        FileOutputStream resourceOS = new FileOutputStream(saveLocation + "/" + url);
+                        bytes = new byte[1024];
+                        while ((len = dataIS.read(bytes)) != -1) {
+                            resourceOS.write(bytes, 0, len);
+                            resourceOS.flush();
+                        }
+                        resourceOS.close();
                     }
                 }
-            } else {
-                // 响应失败（状态码404）：将响应信息打印在控制台上
-                StringBuffer result = new StringBuffer();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.append(line);
-                }
-                reader.close();
-                System.out.println(result);
             }
+            socket.close();
         }
+    }
+
+    private static boolean readLines(InputStream is) throws IOException {
+        boolean endTag = false;
+        ArrayList<Character> charList = new ArrayList<>();
+        int b = 0;
+        while (true) {
+            b = is.read();
+            charList.add((char) b);
+            if (b == '\n')
+                break;
+        }
+        StringBuilder line = new StringBuilder();
+        for (char ch : charList)
+            line.append(String.valueOf(ch));
+        if (line.toString().equals("\r\n"))
+            endTag = true;
+        return !endTag;
     }
 }

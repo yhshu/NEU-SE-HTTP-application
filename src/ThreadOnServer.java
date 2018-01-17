@@ -1,3 +1,8 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -51,6 +56,23 @@ public class ThreadOnServer extends Thread {
                     len = is.read(b);
                 }
                 os.flush();
+
+                if (file.getName().endsWith("html") || file.getName().endsWith("htm"))// 应答的是HTML文档
+                {
+                    Document doc = Jsoup.parse(file, "UTF-8");
+                    Elements jpgs = doc.select("img[src$=.jpg]");
+                    for (Element jpg : jpgs) {
+                        String url = jpg.attr("src"); // 获得相对路径
+                        is = new FileInputStream("C:\\Users\\舒意恒\\Documents\\GitHub\\HTTP-application\\server_dir" + "/" + url);
+                        b = new byte[1024];
+                        len = is.read(b);
+                        while (len != -1) {
+                            os.write(b, 0, len);
+                            len = is.read(b);
+                        }
+                        os.flush();
+                    }
+                }
                 writer.close();
             } else {
                 // 如果文件不存在
@@ -60,8 +82,7 @@ public class ThreadOnServer extends Thread {
                 writer.println("Content-Length:7");
                 writer.println();
                 // 发送响应体
-                writer.print("Server: 404 Not Found");
-                writer.flush();
+                writer.print("The requested resource does not exist.");
                 writer.close();
             }
         } catch (IOException e) {
