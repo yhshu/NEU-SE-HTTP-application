@@ -60,7 +60,7 @@ public class ThreadOnServer extends Thread {
                 writer.println("Content-Length:7");
                 writer.println();
                 // 发送响应体
-                writer.print("404 Not Found");
+                writer.print("Server: 404 Not Found");
                 writer.flush();
                 writer.close();
             }
