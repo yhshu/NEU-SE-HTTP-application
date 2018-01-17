@@ -4,10 +4,13 @@ import java.util.Scanner;
 
 public class HTTPClient {
     public static void main(String args[]) throws IOException {
+
         while (true) {
             Socket socket = null;
             PrintStream writer = null;
             BufferedReader reader = null;
+            byte b[];
+            int len;
 
             Scanner sc = new Scanner(System.in);
             // 连接服务器
@@ -15,8 +18,8 @@ public class HTTPClient {
             // 发送请求头
             writer = new PrintStream(socket.getOutputStream());
             System.out.println("Enter the filename:");
-            String filename = sc.next();
-            sc.close();
+            String filename = sc.nextLine();
+
             writer.println("GET /" + filename + " HTTP/1.1");
             writer.println("Host:localhost");
             writer.println("connetion:keep-alive");
@@ -34,10 +37,10 @@ public class HTTPClient {
             if (firstLineOfResponse.endsWith("OK")) {
                 // 读取响应数据，保存文件
                 System.out.println("Transmission starts...");
-                byte b[] = new byte[1024];
+                b = new byte[1024];
                 String saveLocation = "C:\\Users\\舒意恒\\Documents\\GitHub\\HTTP-application\\saveLocation"; // 保存的位置
                 FileOutputStream fileOS = new FileOutputStream(saveLocation + "/" + filename);
-                int len = socketIS.read(b);
+                len = socketIS.read(b);
                 while (len != -1) {
                     fileOS.write(b, 0, len);
                     len = socketIS.read(b);
