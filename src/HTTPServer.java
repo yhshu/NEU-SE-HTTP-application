@@ -1,0 +1,28 @@
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class HTTPServer {
+    public static void main(String[] args) {
+        final String F_DIR = "";
+        final int PORT = 8888;
+        System.out.println("Server port: " + PORT);
+        try {
+            ServerSocket ss = new ServerSocket(PORT);
+            while (true) {
+                // 接受客户端请求
+                Socket client = ss.accept();
+                // 创建服务线程
+                new ThreadOnServer(client, F_DIR).start();
+                System.out.println(client.toString() + "  " + F_DIR);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
