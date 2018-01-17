@@ -23,7 +23,7 @@ public class ThreadOnServer extends Thread {
 
             String uri = firstLineOfRequest.split(" ")[1];
             File file = new File("C:\\Users\\舒意恒\\Documents\\GitHub\\HTTP-application\\server_dir" + uri);
-            if (file.exists()) {
+            if (file.isFile() && file.exists()) {
                 // 如果文件存在
                 writer.println("HTTP/1.1 200 OK"); // 返回应答消息，并结束应答
                 if (uri.endsWith(".html")) {
