@@ -56,6 +56,7 @@ public class ThreadOnServer extends Thread {
                     len = is.read(b);
                 }
                 os.flush();
+                is.close();
 
                 if (file.getName().endsWith("html") || file.getName().endsWith("htm"))// 应答的是HTML文档
                 {
@@ -71,6 +72,7 @@ public class ThreadOnServer extends Thread {
                             len = is.read(b);
                         }
                         os.flush();
+                        is.close();
                     }
                 }
                 writer.close();
