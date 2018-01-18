@@ -59,10 +59,10 @@ public class ThreadOnServer extends Thread {
                 // 发送响应头
                 writer.println("HTTP/1.1 404 Not Found");
                 writer.println("Content-Type:text/plain");
-                writer.println("Content-Length:7");
+                writer.println("Content-Length:52");
                 writer.println();
                 // 发送响应体
-                writer.print("The requested resource does not exist.");
+                writer.print("404 Not Found\nThe requested resource does not exist.");
                 writer.close();
             }
         } catch (IOException e) {
