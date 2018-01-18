@@ -1,8 +1,3 @@
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.io.*;
 import java.net.Socket;
 
@@ -58,23 +53,6 @@ public class ThreadOnServer extends Thread {
                 os.flush();
                 is.close();
 
-                if (file.getName().endsWith("html") || file.getName().endsWith("htm"))// 应答的是HTML文档
-                {
-                    Document doc = Jsoup.parse(file, "UTF-8");
-                    Elements jpgs = doc.select("img[src$=.jpg]");
-                    for (Element jpg : jpgs) {
-                        String url = jpg.attr("src"); // 获得相对路径
-                        is = new FileInputStream("C:\\Users\\舒意恒\\Documents\\GitHub\\HTTP-application\\server_dir" + "/" + url);
-                        b = new byte[1024];
-                        len = is.read(b);
-                        while (len != -1) {
-                            os.write(b, 0, len);
-                            len = is.read(b);
-                        }
-                        os.flush();
-                        is.close();
-                    }
-                }
                 writer.close();
             } else {
                 // 如果文件不存在

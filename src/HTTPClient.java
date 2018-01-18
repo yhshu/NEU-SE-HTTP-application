@@ -9,11 +9,25 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class HTTPClient {
+    private static String saveLocation = "C:\\Users\\舒意恒\\Documents\\GitHub\\HTTP-application\\saveLocation"; // 保存的位置
+
     public static void main(String args[]) throws IOException {
         while (true) {
             System.out.println("Enter the filename:");
             Scanner sc = new Scanner(System.in);
-            getFile(sc.nextLine());
+            String fileName = sc.nextLine();
+            getFile(fileName);
+
+            if (fileName.endsWith(".html") || fileName.endsWith("htm"))// 请求的是HTML文档
+            {
+                File HTMLdoc = new File(saveLocation + "/" + fileName);
+                Document doc = Jsoup.parse(HTMLdoc, "UTF-8");
+                Elements jpgs = doc.select("img[src$=.jpg]");
+                for (Element jpg : jpgs) {
+                    String url = jpg.attr("src"); // 获得相对路径
+                    getFile(url);   // 请求HTML文档中的jpg
+                }
+            }
         }
     }
 
@@ -77,7 +91,6 @@ public class HTTPClient {
             // 读取响应数据，保存文件
             System.out.println("Transmission starts...");
 
-            String saveLocation = "C:\\Users\\舒意恒\\Documents\\GitHub\\HTTP-application\\saveLocation"; // 保存的位置
             FileOutputStream fileOS = new FileOutputStream(saveLocation + "/" + fileName);
 
             byte[] bytes = new byte[1024];
@@ -89,19 +102,7 @@ public class HTTPClient {
             fileOS.close();
 
             System.out.println("Transmission complete.");
-
-            if (fileName.endsWith(".html") || fileName.endsWith("htm"))// 请求的是HTML文档
-            {
-                File HTMLdoc = new File(saveLocation + "/" + fileName);
-                Document doc = Jsoup.parse(HTMLdoc, "UTF-8");
-                Elements jpgs = doc.select("img[src$=.jpg]");
-                for (Element jpg : jpgs) {
-                    String url = jpg.attr("src"); // 获得相对路径
-                  
-                }
-            }
         }
         socket.close();
-
     }
 }
