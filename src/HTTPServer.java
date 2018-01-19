@@ -1,10 +1,6 @@
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 
 public class HTTPServer {
     public static void main(String[] args) {
