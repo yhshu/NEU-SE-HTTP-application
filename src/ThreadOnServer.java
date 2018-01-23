@@ -11,11 +11,11 @@ public class ThreadOnServer extends Thread {
     }
 
     public void run() {
-        InputStream is = null;
-        OutputStream os = null;
-        BufferedReader reader = null;
-        PrintStream writer = null;
-        String firstLineOfRequest = "";
+        InputStream is;
+        OutputStream os;
+        BufferedReader reader;
+        PrintStream writer;
+        String firstLineOfRequest;
         try {
             reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
             writer = new PrintStream(socketClient.getOutputStream());
@@ -66,7 +66,6 @@ public class ThreadOnServer extends Thread {
                 writer.close();
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

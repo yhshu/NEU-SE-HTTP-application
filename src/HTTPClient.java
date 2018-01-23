@@ -22,10 +22,20 @@ public class HTTPClient {
             {
                 File HTMLdoc = new File(saveLocation + "/" + fileName);
                 Document doc = Jsoup.parse(HTMLdoc, "UTF-8");
-                Elements jpgs = doc.select("img[src$=.jpg]");
-                for (Element jpg : jpgs) {
-                    String url = jpg.attr("src"); // 获得相对路径
+                Elements imgs = doc.select("img");
+                for (Element img : imgs) {
+                    String url = img.attr("src"); // 获得相对路径
                     getFile(url);   // 请求HTML文档中的jpg
+                }
+                Elements css = doc.select("link[href$=.css]");
+                for (Element c : css) {
+                    String url = c.attr("href");
+                    getFile(url);
+                }
+                Elements scripts = doc.select("script[src$=.js]");
+                for (Element js : scripts) {
+                    String url = js.attr("src");
+                    getFile(url);
                 }
             }
         }
@@ -50,27 +60,23 @@ public class HTTPClient {
     }
 
     private static void getFile(String fileName) throws IOException {
-        Socket socket = null;
-        PrintStream writer = null;
-        BufferedReader reader = null;
-        ByteArrayOutputStream byteOS = new ByteArrayOutputStream();
-        InputStream socketIS = null;
+        Socket socket;
+        PrintStream writer;
+        InputStream socketIS;
 
         // 连接服务器
         socket = new Socket("localhost", 8888);
         // 发送请求头
         writer = new PrintStream(socket.getOutputStream());
-
         writer.println("GET /" + fileName + " HTTP/1.1");
         writer.println("Host:localhost");
         writer.println("connetion:keep-alive");
         writer.println();
         writer.flush();
-
         // 接收响应状态
         socketIS = socket.getInputStream();
         DataInputStream dataIS = new DataInputStream(socketIS);
-
+        // 处理响应报文第一行
         int b = 0;
         ArrayList<Character> charList = new ArrayList<>();
         while (true) {
@@ -92,7 +98,6 @@ public class HTTPClient {
             System.out.println("Transmission starts...");
 
             FileOutputStream fileOS = new FileOutputStream(saveLocation + "/" + fileName);
-
             byte[] bytes = new byte[1024];
             int len;
             while ((len = dataIS.read(bytes)) != -1) {
@@ -103,6 +108,6 @@ public class HTTPClient {
 
             System.out.println("Transmission complete.");
         }
-        socket.close();
+        socket.close(); // 关闭连接
     }
 }
