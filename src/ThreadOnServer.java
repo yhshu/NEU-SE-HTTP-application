@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class ThreadOnServer extends Thread {
-    private Socket socketClient = null;
+    private Socket socketClient;
     private String path = "";
 
     public ThreadOnServer(Socket socketClient, String path) {
