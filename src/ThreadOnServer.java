@@ -1,3 +1,10 @@
+/**
+ * HTTP 服务器线程
+ *
+ * @author 舒意恒
+ * @see HTTPServer
+ */
+
 import java.io.*;
 import java.net.Socket;
 

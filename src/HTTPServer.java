@@ -1,3 +1,10 @@
+/**
+ * HTTP 服务器，支持多线程
+ * 支持使用浏览器访问资源
+ *
+ * @author 舒意恒
+ */
+
 import java.net.ServerSocket;
 import java.net.Socket;
 

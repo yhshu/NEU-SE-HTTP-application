@@ -1,3 +1,10 @@
+/**
+ * HTTP 客户端
+ * 实现了HTML文件内资源解析
+ *
+ * @author 舒意恒
+ */
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
